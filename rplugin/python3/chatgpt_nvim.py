@@ -6,7 +6,7 @@ from math import ceil
 
 import neovim
 from dotenv import load_dotenv
-from revChatGPT.revChatGPT import Chatbot
+from revChatGPT.ChatGPT import Chatbot
 
 CONFIG_PATH = '~/.chatgpt-nvim.json'
 DEFAULT_CONFIG = {'authorization': '', 'session_token': ''}
@@ -277,7 +277,7 @@ class Bot:
     self.client.refresh_session()
 
   def query(self, message):
-    return self.client.get_chat_response(message)['message']
+    return self.client.ask(message)['message']
 
 @neovim.plugin
 class Plugin:
@@ -305,5 +305,6 @@ class Plugin:
     else:
       try:
         self.editor.write(self.bot.query(' '.join(args)))
-      except:
+      except Exception as e:
+        print(e)
         self.editor.write('error: Failed to get response from ChatGPT')
