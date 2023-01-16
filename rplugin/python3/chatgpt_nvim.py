@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 from revChatGPT.ChatGPT import Chatbot
 
 CONFIG_PATH = '~/.chatgpt-nvim.json'
-DEFAULT_CONFIG = {'authorization': '', 'session_token': ''}
+DEFAULT_CONFIG = {'authorization': '', 'session_token': '', 'driver_exec_path': ''}
 
 CHAT_GPT = r'''
       ___           ___           ___           ___           ___           ___           ___
@@ -29,6 +29,7 @@ CHAT_GPT = r'''
 class Config:
   authorization: str
   session_token: str
+  driver_exec_path: str
 
   @staticmethod
   def load():
@@ -43,7 +44,7 @@ class Config:
 
   def as_dict(self):
     return {
-      'Authorization': self.authorization, 'session_token': self.session_token
+      'Authorization': self.authorization, 'session_token': self.session_token, 'driver_exec_path': self.driver_exec_path
     }
 
 class Anchor(Enum):
