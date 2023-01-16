@@ -269,6 +269,14 @@ class Editor:
   def write(self, message):
     self.client.api.echo([[message, '']], True, {})
 
+  def write_to_vsp(self, message):
+    print(message)
+    self.client.api.exec("vsp", True)
+    win = self.client.api.get_current_win()
+    buf = self.client.api.create_buf(True, True)
+    self.client.api.win_set_buf(win, buf)
+    self.client.api.buf_set_lines(buf, 0, -1, False, message.split('\n'))
+
 class Bot:
   def __init__(self, client):
     self.client = client
@@ -281,9 +289,10 @@ class Bot:
 
 @neovim.plugin
 class Plugin:
-  def __init__(self, client):
+  def __init__(self, nvim):
+    self.nvim = self.client = nvim
     self.bot = Bot(Chatbot(Config.load().as_dict()))
-    self.editor = Editor(client)
+    self.editor = Editor(nvim)
 
   @neovim.function('_chat_query')
   def _chat_query(self, args):
@@ -304,7 +313,10 @@ class Plugin:
       self.editor.show_chat()
     else:
       try:
-        self.editor.write(self.bot.query(' '.join(args)))
+        message = self.bot.query(' '.join(args))
+        # self.editor.write(message)
+        self.editor.write_to_vsp(message)
       except Exception as e:
         print(e)
+        # raise e
         self.editor.write('error: Failed to get response from ChatGPT')
